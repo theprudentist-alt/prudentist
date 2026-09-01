@@ -55,7 +55,7 @@ h1, h2, h3, p { margin-top: 0; }
 }
 .nav-wrap { height: 80px; display: flex; align-items: center; justify-content: space-between; }
 .brand { display: inline-flex; align-items: center; text-decoration: none; letter-spacing: -.045em; font-size: 24px; }
-.brand img { width: 36px; height: 36px; margin-right: 9px; object-fit: contain; }
+.brand img { width: 44px; height: 44px; margin-right: 10px; object-fit: contain; }
 .brand span { font-family: var(--font-serif); }
 .brand strong { color: var(--coral); font-family: var(--font-serif); font-size: inherit; font-weight: 400; letter-spacing: inherit; }
 .site-nav { display: flex; align-items: center; gap: clamp(18px, 2.2vw, 34px); }
@@ -88,6 +88,10 @@ h1, h2, h3, p { margin-top: 0; }
 .eyebrow, .section-label {
   text-transform: uppercase; letter-spacing: .16em; font-size: 11px; font-weight: 700;
 }
+.hero-signature { display: flex; align-items: center; gap: 17px; margin-bottom: 19px; }
+.hero-signature > img { width: clamp(82px, 8vw, 112px); height: auto; flex: 0 0 auto; }
+.hero-signature .eyebrow { margin: 0 0 5px; }
+.hero-brand-name { margin: 0; font-family: var(--font-serif); font-size: clamp(27px, 3vw, 38px); line-height: 1; letter-spacing: -.045em; }
 .eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; }
 .eyebrow span { width: 30px; height: 1px; background: var(--coral); }
 h1 {
@@ -141,6 +145,7 @@ h2 { margin-bottom: 0; font-family: var(--font-serif); font-size: clamp(43px, 5v
 .approach { color: var(--white); background: var(--ink-deep); }
 .approach-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: clamp(60px, 10vw, 150px); }
 .approach .section-intro { margin: 0; }
+.approach-mark { width: 72px; height: 72px; margin: 0 0 27px; object-fit: contain; }
 .approach .section-intro > p:last-child { color: var(--sage); }
 .learning-chain { margin: 0; padding: 0; list-style: none; }
 .learning-chain li { display: grid; grid-template-columns: 42px 1fr auto; gap: 20px; align-items: baseline; padding: 23px 0; border-top: 1px solid rgb(255 255 255 / 18%); }
@@ -221,7 +226,8 @@ h2 { margin-bottom: 0; font-family: var(--font-serif); font-size: clamp(43px, 5v
 .site-footer { padding: 46px 0; color: var(--white); background: var(--ink-deep); border-top: 1px solid rgb(255 255 255 / 15%); }
 .footer-grid { display: grid; grid-template-columns: .5fr 1fr auto; gap: 35px; align-items: end; }
 .brand-footer { color: var(--white); }
-.brand-footer img { border-radius: 50%; background: var(--paper-light); }
+.brand-footer { font-size: 30px; }
+.brand-footer img { width: 52px; height: 52px; border-radius: 50%; background: var(--paper-light); }
 .footer-grid > p { max-width: 360px; margin: 0; color: var(--sage); font-size: 12px; }
 .footer-meta { display: flex; gap: 20px; font-size: 11px; }
 .footer-meta a { text-underline-offset: 4px; }
@@ -280,12 +286,20 @@ h2 { margin-bottom: 0; font-family: var(--font-serif); font-size: clamp(43px, 5v
   .nav-wrap { height: 70px; }
   .site-nav { top: 70px; }
   .hero { padding: 118px 0 76px; }
+  .hero-signature { gap: 13px; margin-bottom: 17px; }
+  .hero-signature > img { width: 72px; }
+  .hero-brand-name { font-size: 29px; }
+  .hero-signature .eyebrow { font-size: 9px; letter-spacing: .12em; }
+  .hero-signature .eyebrow span { width: 18px; }
   h1 { font-size: clamp(50px, 15.5vw, 70px); }
   h2 { font-size: clamp(39px, 11.5vw, 52px); }
   .hero-actions { align-items: stretch; flex-direction: column; gap: 18px; }
   .text-link { align-self: flex-start; }
   .practice-map { width: calc(100% - 12px); padding: 20px; }
   .map-outcome { margin: 24px -20px -20px; padding: 17px 20px; }
+  .approach-mark { width: 58px; height: 58px; margin-bottom: 22px; }
+  .brand-footer { font-size: 27px; }
+  .brand-footer img { width: 46px; height: 46px; }
   .pathway-grid { grid-template-columns: 1fr; }
   .path-card { min-height: auto; padding: 28px 24px; }
   .path-card > div:nth-child(2) { margin-top: 38px; }
