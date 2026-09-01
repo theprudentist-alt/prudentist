@@ -90,20 +90,116 @@ if (hasMeasurementId) {
   else if (consent !== 'declined') showConsent();
 }
 
-document.querySelectorAll('[data-google-form]').forEach((container) => {
-  const formName = container.dataset.googleForm;
-  const property = formName === 'survey' ? 'surveyFormUrl' : 'waitlistFormUrl';
-  const formUrl = String(config[property] || '').trim();
-  if (!/^https:\/\/docs\.google\.com\/forms\//i.test(formUrl)) return;
+const formEndpoint = String(config.formEndpoint || '').trim();
+const hasFormEndpoint = /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec(?:\?.*)?$/i.test(formEndpoint);
+const appsScriptOrigin = (origin) => {
+  try {
+    const host = new URL(origin).hostname;
+    return host === 'script.google.com' || host.endsWith('.googleusercontent.com');
+  } catch {
+    return false;
+  }
+};
+const formFields = {
+  survey: ['path', 'stage', 'challenge', 'training', 'pilot', 'email', 'company'],
+  waitlist: ['name', 'country', 'email', 'dentalSchool', 'graduationYear', 'currentStatus', 'pathOfInterest', 'primaryGoal', 'challenge', 'training', 'whatsApp', 'company']
+};
 
-  const iframe = document.createElement('iframe');
-  iframe.className = 'google-form-frame';
-  iframe.src = formUrl;
-  iframe.title = formName === 'survey' ? 'Prudentist dentist survey' : 'Prudentist early-access form';
-  iframe.loading = 'lazy';
-  iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-  iframe.addEventListener('load', () => track('google_form_loaded', { form_name: formName }));
-  container.querySelector('[data-form-placeholder]')?.replaceWith(iframe);
+const createNonce = () => {
+  const bytes = new Uint8Array(18);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+};
+
+const setFormStatus = (panel, message, type = '') => {
+  const status = panel.querySelector('[data-form-status]');
+  if (!status) return;
+  status.textContent = message;
+  status.className = `form-status${type ? ` ${type}` : ''}`;
+};
+
+document.querySelectorAll('[data-prudentist-form]').forEach((form) => {
+  const formName = form.dataset.prudentistForm;
+  const panel = form.closest('[data-form-panel]');
+  const submitButton = form.querySelector('[type="submit"]');
+  if (!panel || !submitButton || !formFields[formName]) return;
+
+  if (!hasFormEndpoint) {
+    setFormStatus(panel, 'This form is being connected. Please try again shortly.', 'error');
+    submitButton.disabled = true;
+    return;
+  }
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    if (!form.reportValidity()) return;
+
+    const values = Object.fromEntries(new FormData(form).entries());
+    const honeypot = String(values.company || '').trim();
+    if (honeypot) {
+      panel.classList.add('is-complete');
+      setFormStatus(panel, 'Thank you for sharing your perspective.', 'success');
+      return;
+    }
+
+    const fields = {};
+    formFields[formName].forEach((field) => {
+      if (field !== 'company' && values[field] !== undefined) fields[field] = String(values[field]).trim();
+    });
+    const nonce = createNonce();
+    const frameName = `prudentist-submit-${nonce}`;
+    const frame = document.createElement('iframe');
+    frame.name = frameName;
+    frame.hidden = true;
+    frame.title = 'Form submission';
+    document.body.append(frame);
+
+    const transport = document.createElement('form');
+    transport.method = 'post';
+    transport.action = formEndpoint;
+    transport.target = frameName;
+    transport.hidden = true;
+    const addField = (name, value) => {
+      const input = document.createElement('input');
+      input.name = name;
+      input.value = value;
+      transport.append(input);
+    };
+    addField('payload', JSON.stringify({ formName, fields, nonce, parentOrigin: location.origin }));
+    document.body.append(transport);
+
+    let settled = false;
+    const cleanup = () => {
+      window.removeEventListener('message', onMessage);
+      clearTimeout(timeout);
+      transport.remove();
+      frame.remove();
+    };
+    const finish = (ok, message) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      submitButton.disabled = false;
+      if (ok) {
+        form.reset();
+        panel.classList.add('is-complete');
+        setFormStatus(panel, message || 'Thank you. Your response has been received.', 'success');
+        track('form_submission_confirmed', { form_name: formName });
+      } else {
+        setFormStatus(panel, message || 'We could not submit that response. Please try again.', 'error');
+      }
+    };
+    const onMessage = (messageEvent) => {
+      const data = messageEvent.data;
+      if (!appsScriptOrigin(messageEvent.origin) || !data || data.type !== 'prudentist_form_result' || data.nonce !== nonce) return;
+      finish(Boolean(data.ok), String(data.message || ''));
+    };
+    const timeout = window.setTimeout(() => finish(false, 'We could not confirm your submission. Please try again.'), 25000);
+    window.addEventListener('message', onMessage);
+    submitButton.disabled = true;
+    setFormStatus(panel, 'Submitting securely…');
+    transport.submit();
+  });
 });
 
 document.addEventListener('click', (event) => {

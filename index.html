@@ -38,12 +38,11 @@
     }
   </script>
   <!-- ANALYTICS SETUP: Replace G-XXXXXXXXXX with the GA4 Measurement ID. -->
-  <!-- Google Forms are published and connected to private response spreadsheets. -->
+  <!-- Google Forms remain the private response store. Native forms submit through the Apps Script bridge. -->
   <script>
     window.PRUDENTIST_CONFIG = Object.freeze({
       gaMeasurementId: 'G-XXXXXXXXXX',
-      surveyFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdm14lJ96o8486iN27uvQObMZdIqC3O42g9LBUlEasbaXY5Cg/viewform?embedded=true',
-      waitlistFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSdpBqSPaWA3IBHnWvRkgtCBtv1rXar6YIjiNhGqTXsr5Ntv7A/viewform?embedded=true',
+      formEndpoint: 'https://script.google.com/macros/s/AKfycbwQrC7m4jAkNEf0jddN-EmXAy565NedYGrX7xnEBtegjONEAjOuwFw5HVNb6ll81u9U/exec',
       enableCoarseGeoLookup: false
     });
   </script>
@@ -204,14 +203,53 @@
           <div class="survey-time"><strong>3</strong><span>minutes<br>to make your voice count</span></div>
         </div>
 
-        <div class="form-panel form-embed" data-google-form="survey">
-          <div class="form-heading"><span>Short dentist survey</span><span>Google Form</span></div>
-          <!-- The iframe is created by site.js from PRUDENTIST_CONFIG.surveyFormUrl. -->
-          <div class="form-placeholder" data-form-placeholder>
-            <strong>Survey embed awaiting setup</strong>
-            <p>Paste the Google Forms iframe <code>src</code> URL into <code>surveyFormUrl</code> near the top of this HTML file.</p>
-          </div>
-          <noscript><p>JavaScript is required for the embedded survey. Add a public Google Form link here as a fallback.</p></noscript>
+        <div class="form-panel" data-form-panel>
+          <div class="form-heading"><span>Short dentist survey</span><span>3 minutes</span></div>
+          <form data-prudentist-form="survey" novalidate>
+            <div class="field honeypot" aria-hidden="true">
+              <label for="survey-company">Company</label>
+              <input id="survey-company" name="company" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <fieldset class="field radio-field">
+              <legend>Which path best fits you?</legend>
+              <label><input name="path" type="radio" value="Prudentist Clinical" required>Prudentist Clinical</label>
+              <label><input name="path" type="radio" value="Prudentist Global">Prudentist Global</label>
+              <label><input name="path" type="radio" value="Still exploring">Still exploring</label>
+            </fieldset>
+            <fieldset class="field radio-field">
+              <legend>Where are you right now?</legend>
+              <label><input name="stage" type="radio" value="Dental student" required>Dental student</label>
+              <label><input name="stage" type="radio" value="New graduate">New graduate</label>
+              <label><input name="stage" type="radio" value="Practicing dentist">Practicing dentist</label>
+              <label><input name="stage" type="radio" value="U.S. pathway candidate">U.S. pathway candidate</label>
+              <label><input name="stage" type="radio" value="Canada pathway candidate">Canada pathway candidate</label>
+            </fieldset>
+            <div class="field">
+              <label for="survey-challenge">What is your biggest challenge right now?</label>
+              <textarea id="survey-challenge" name="challenge" rows="3" required maxlength="1200" placeholder="Tell us what would make the biggest difference."></textarea>
+            </div>
+            <fieldset class="field radio-field">
+              <legend>What training would help most?</legend>
+              <label><input name="training" type="radio" value="Clinical confidence and case planning" required>Clinical confidence and case planning</label>
+              <label><input name="training" type="radio" value="Practice ownership and business skills">Practice ownership and business skills</label>
+              <label><input name="training" type="radio" value="U.S. or Canada pathway guidance">U.S. or Canada pathway guidance</label>
+              <label><input name="training" type="radio" value="Mentorship and accountability">Mentorship and accountability</label>
+            </fieldset>
+            <fieldset class="field radio-field">
+              <legend>Would you consider joining a focused pilot?</legend>
+              <label><input name="pilot" type="radio" value="Yes" required>Yes</label>
+              <label><input name="pilot" type="radio" value="Maybe">Maybe</label>
+              <label><input name="pilot" type="radio" value="Not yet">Not yet</label>
+            </fieldset>
+            <div class="field">
+              <label for="survey-email">Email <span>(optional)</span></label>
+              <input id="survey-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com">
+            </div>
+            <p class="field-hint">No patient details or clinical records, please.</p>
+            <button class="button" type="submit">Share your perspective <span aria-hidden="true">→</span></button>
+          </form>
+          <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+          <noscript><p>JavaScript is required to submit this form. Please contact <a href="mailto:hello@prudentist.in">hello@prudentist.in</a>.</p></noscript>
         </div>
       </div>
     </section>
@@ -225,15 +263,33 @@
           <p>Join the early access list. We’ll learn where you are, what you need, and which pathway should reach you first.</p>
         </div>
 
-        <div class="form-panel form-panel-dark form-embed" data-google-form="waitlist">
-          <div class="form-heading"><span>Early access</span><span>Google Form</span></div>
-          <!-- The iframe is created by site.js from PRUDENTIST_CONFIG.waitlistFormUrl. -->
-          <div class="form-placeholder" data-form-placeholder>
-            <strong>Early-access embed awaiting setup</strong>
-            <p>Paste the Google Forms iframe <code>src</code> URL into <code>waitlistFormUrl</code> near the top of this HTML file.</p>
-          </div>
+        <div class="form-panel form-panel-dark" data-form-panel>
+          <div class="form-heading"><span>Early access</span><span>Founding community</span></div>
+          <form data-prudentist-form="waitlist" novalidate>
+            <div class="field honeypot" aria-hidden="true">
+              <label for="waitlist-company">Company</label>
+              <input id="waitlist-company" name="company" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="waitlist-name">Name</label><input id="waitlist-name" name="name" type="text" autocomplete="name" required maxlength="120"></div>
+              <div class="field"><label for="waitlist-country">Country</label><input id="waitlist-country" name="country" type="text" autocomplete="country-name" required maxlength="120"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label for="waitlist-email">Email</label><input id="waitlist-email" name="email" type="email" autocomplete="email" required maxlength="254"></div>
+              <div class="field field-year"><label for="waitlist-year">Graduation year</label><input id="waitlist-year" name="graduationYear" type="text" inputmode="numeric" pattern="[0-9]{4}" required maxlength="4" placeholder="2026"></div>
+            </div>
+            <div class="field"><label for="waitlist-school">Dental school</label><input id="waitlist-school" name="dentalSchool" type="text" required maxlength="200"></div>
+            <div class="field"><label for="waitlist-status">Current status</label><input id="waitlist-status" name="currentStatus" type="text" required maxlength="160" placeholder="Student, new graduate, practicing dentist…"></div>
+            <div class="field"><label for="waitlist-path">Path of interest</label><input id="waitlist-path" name="pathOfInterest" type="text" required maxlength="160" placeholder="Clinical growth, U.S., Canada…"></div>
+            <div class="field"><label for="waitlist-goal">Primary goal</label><input id="waitlist-goal" name="primaryGoal" type="text" required maxlength="300"></div>
+            <div class="field"><label for="waitlist-challenge">Biggest current challenge</label><textarea id="waitlist-challenge" name="challenge" rows="3" required maxlength="1200"></textarea></div>
+            <div class="field"><label for="waitlist-training">Training wanted most</label><input id="waitlist-training" name="training" type="text" required maxlength="300"></div>
+            <div class="field"><label for="waitlist-whatsapp">WhatsApp number <span>(optional)</span></label><input id="waitlist-whatsapp" name="whatsApp" type="tel" autocomplete="tel" maxlength="40"></div>
+            <button class="button button-coral" type="submit">Join early access <span aria-hidden="true">→</span></button>
+          </form>
+          <p class="form-status" data-form-status role="status" aria-live="polite"></p>
           <p class="privacy-note">Responses are managed in Google Forms and used only to understand demand and contact you about Prudentist. <a href="privacy.html">Read our privacy note.</a></p>
-          <noscript><p>JavaScript is required for the embedded form. Add a public Google Form link here as a fallback.</p></noscript>
+          <noscript><p>JavaScript is required to submit this form. Please contact <a href="mailto:hello@prudentist.in">hello@prudentist.in</a>.</p></noscript>
         </div>
       </div>
     </section>

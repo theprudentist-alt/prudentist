@@ -76,6 +76,7 @@ h1, h2, h3, p { margin-top: 0; }
   transition: transform .2s ease, color .2s ease, background .2s ease;
 }
 .button:hover { transform: translateY(-2px); background: var(--teal); border-color: var(--teal); }
+.button:disabled { cursor: wait; opacity: .62; transform: none; }
 .button-small { min-height: 42px; padding: 9px 16px; }
 .button-full { width: 100%; }
 .button-coral { color: var(--ink-deep); background: var(--coral); border-color: var(--coral); }
@@ -206,23 +207,6 @@ h2 { margin-bottom: 0; font-family: var(--font-serif); font-size: clamp(43px, 5v
 .form-panel-dark .field-hint, .form-panel-dark .privacy-note { color: var(--sage); }
 .form-panel-dark .form-status.success { color: var(--sage); }
 
-.form-embed { overflow: hidden; }
-.google-form-frame {
-  display: block; width: 100%; height: 860px; border: 0; border-radius: 2px;
-  color-scheme: light; background: var(--white);
-}
-[data-google-form="waitlist"] .google-form-frame { height: 1120px; }
-.form-placeholder {
-  min-height: 360px; padding: 42px; display: grid; place-content: center; gap: 12px;
-  border: 1px dashed var(--line); text-align: center; background: rgb(255 255 255 / 35%);
-}
-.form-placeholder strong { font-family: var(--font-serif); font-size: 28px; font-weight: 400; }
-.form-placeholder p { max-width: 480px; margin: 0; color: var(--text-muted); }
-.form-placeholder code { padding: 2px 5px; background: rgb(21 51 45 / 8%); overflow-wrap: anywhere; }
-.form-panel-dark .form-placeholder { border-color: rgb(255 255 255 / 30%); background: rgb(255 255 255 / 4%); }
-.form-panel-dark .form-placeholder p { color: var(--sage); }
-.form-panel-dark .form-placeholder code { background: rgb(255 255 255 / 10%); }
-
 .consent-banner {
   position: fixed; z-index: 100; right: 18px; bottom: 18px; width: min(540px, calc(100% - 36px));
   padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 22px;
@@ -310,9 +294,6 @@ h2 { margin-bottom: 0; font-family: var(--font-serif); font-size: clamp(43px, 5v
   .learning-chain small { grid-column: 2; text-align: left; }
   .founder-index { max-width: none; }
   .form-panel { margin-inline: -2px; padding: 25px 20px; }
-  .google-form-frame { height: 940px; }
-  [data-google-form="waitlist"] .google-form-frame { height: 1220px; }
-  .form-placeholder { min-height: 300px; padding: 26px 18px; }
   .consent-banner { align-items: stretch; flex-direction: column; }
   .consent-banner > div { justify-content: space-between; }
   .field-row { grid-template-columns: 1fr; gap: 0; }

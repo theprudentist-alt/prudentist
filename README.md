@@ -4,7 +4,7 @@ Prudentist is now a zero-build static website: semantic HTML, one CSS file, one 
 
 ## Files to publish
 
-- `index.html` — landing page, SEO metadata, Google Form and GA4 configuration
+- `index.html` — landing page, SEO metadata, native form UI, and GA4 configuration
 - `privacy.html` — privacy disclosure
 - `404.html` — GitHub Pages fallback
 - `robots.txt` and `sitemap.xml` — search-crawler instructions
@@ -50,24 +50,17 @@ Suggested **Prudentist early access** questions:
 10. Biggest current challenge.
 11. Training wanted most.
 
-Both production forms are now published and connected to private response Sheets. Their public embed URLs are configured in `index.html`. For future form maintenance:
+Both production forms are published and connected to private response Sheets. The site uses the native Prudentist form UI and an Apps Script bridge to create Google Form responses. For future form maintenance:
 
 1. Open **Settings** and decide whether to collect email addresses. Do not require Google sign-in unless that is intentional; sign-in adds conversion friction.
 2. Do not add a file-upload question; visitors should never submit patient records.
 3. Publish the form and set responder access to anyone with the link.
 4. Open **Responses** → **Link to Sheets** to create a private response spreadsheet.
-5. Open the top-right **More** menu → **Embed HTML** and copy the iframe HTML. Google documents the current flow in [Publish and share your form](https://support.google.com/docs/answer/2839588).
-6. From the copied iframe, copy only the URL between `src="` and the next `"`. It normally begins with `https://docs.google.com/forms/` and ends with `embedded=true`.
-7. Open `index.html` and find `window.PRUDENTIST_CONFIG` near the top. Update the two existing URLs:
+5. Keep the question titles and multiple-choice values aligned with `apps-script/Code.gs`.
+6. Deploy `apps-script/Code.gs` as the **Prudentist Google Forms bridge** web app. Its dedicated [deployment guide](apps-script/README.md) explains the nonce-bound iframe/postMessage transport used to handle cross-origin submission safely.
+7. Put the resulting `/exec` URL into `window.PRUDENTIST_CONFIG.formEndpoint` in `index.html`.
 
-```javascript
-surveyFormUrl: 'https://docs.google.com/forms/.../viewform?embedded=true',
-waitlistFormUrl: 'https://docs.google.com/forms/.../viewform?embedded=true',
-```
-
-The site creates accessible, responsive iframes automatically. Until URLs are added, visible setup placeholders remain instead of broken empty frames.
-
-Google Forms is cross-origin, so this page cannot reliably observe the final submit button inside the iframe. Use the Google Form response count/linked Sheet for completion numbers; GA4 tracks page views, site clicks, and successful iframe loads.
+The site does not use Google Forms iframes or a browser-only `no-cors` request. It submits a standard cross-origin HTML form to the bridge, which writes the response to Google Forms and reports a nonce-verified result back to the branded UI. The Google Form response count and linked Sheet remain the source of truth for completion totals.
 
 ## 2. Create and connect GA4
 
@@ -85,7 +78,7 @@ gaMeasurementId: 'G-XXXXXXXXXX',
 
 The GA script is not downloaded while the placeholder remains. Once configured, the site shows a small analytics choice. Accepting it loads GA4; declining stores only that choice locally. Do Not Track disables analytics. Advertising personalization and Google Signals are disabled in code.
 
-Automatic custom event: `site_click`, with link label, URL, and outbound status. Embedded frame load event: `google_form_loaded`.
+Automatic custom events: `site_click`, with link label, URL, and outbound status; and `form_submission_confirmed`, with the form name only. Form answers and contact details never go to GA4.
 
 ### About IP addresses
 
@@ -124,7 +117,7 @@ Before `git add`, confirm the ignored `instance/` database and `.venv/` do not a
 3. Under **Build and deployment**, choose **Deploy from a branch**.
 4. Select `main` and `/(root)`, then click **Save**. This is GitHub’s documented [branch publishing flow](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
 5. Wait for the Pages deployment to finish, then open `https://YOUR_USERNAME.github.io/prudentist/`.
-6. Test desktop/mobile navigation, both embedded forms, their linked response Sheets, the privacy page, and GA4 **Reports → Realtime**.
+6. Test desktop/mobile navigation, both native forms, their linked response Sheets, the privacy page, and GA4 **Reports → Realtime**.
 
 Relative asset links are used so the site works both under `/prudentist/` and at a future custom domain.
 
