@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://theprudentist-alt.github.io/prudentist/sitemap.xml

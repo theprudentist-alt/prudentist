@@ -1,0 +1,17 @@
+{
+  "name": "Prudentist",
+  "short_name": "Prudentist",
+  "description": "Clinical education and mentorship for dentists ready to build confident real-world practice.",
+  "start_url": "../index.html",
+  "display": "standalone",
+  "background_color": "#f5f0e6",
+  "theme_color": "#12332d",
+  "icons": [
+    {
+      "src": "images/prudentist-mark-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
