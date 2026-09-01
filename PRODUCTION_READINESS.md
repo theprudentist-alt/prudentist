@@ -157,7 +157,7 @@ After the final domain is known:
 
 ## Local performance baseline
 
-The static build was checked on September 1, 2026 at desktop and 390×844 mobile widths. It returned HTTP 200 with no browser-console errors, no horizontal overflow, one H1, valid SEO metadata and JSON-LD, native branded forms, and a working keyboard-closeable mobile menu. The deployed bridge also accepted a marked end-to-end survey verification response.
+The static build was checked on September 1, 2026 at desktop and 390×844 mobile widths. It returned HTTP 200 with no browser-console errors, no horizontal overflow, one H1, valid SEO metadata and JSON-LD, native branded forms, and a working keyboard-closeable mobile menu. The deployed bridge accepted marked end-to-end survey and early-access responses from the live Pages UI.
 
 | Metric | Local result |
 |---|---:|
