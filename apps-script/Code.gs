@@ -10,8 +10,8 @@
 const PRUDENTIST = Object.freeze({
   allowedParentOrigins: [
     'https://theprudentist-alt.github.io',
-    'https://www.prudentist.in',
-    'https://prudentist.in'
+    'https://prudentist.co.in',
+    'https://www.prudentist.co.in'
   ],
   forms: {
     survey: {
